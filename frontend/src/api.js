@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE;
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000/api/profile';
 
 export async function fetchProfile() {
   const res = await fetch(API_BASE);

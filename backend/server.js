@@ -8,21 +8,41 @@ const profileRoutes = require('./src/routes/profileRoutes');
 const app = express();
 app.use(express.json());
 
-// Allow frontend origin or fallback to *
+// Allowed origins
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://me-api-playground-2-7wgi.onrender.com" // deployed frontend
+];
+
+// CORS middleware
 app.use(cors({
-  origin: "'http://localhost:5173',https://me-api-playground-2-7wgi.onrender.com",   // allow Vite frontend
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow server-to-server calls or Postman
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
-// Mount profile routes at /api/profile
+// Routes
 app.use('/api/profile', profileRoutes);
 
-// health endpoint
-app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
+// Start server
 const port = process.env.PORT || 4000;
 
 connect()
-  .then(() => app.listen(port, () => console.log(`Server running on http://localhost:${port}`)))
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  })
   .catch(err => console.error('DB connect error', err));
