@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Allow frontend origin or fallback to *
 app.use(cors({
-  origin: "https://me-api-playground-2-7wgi.onrender.com",   // allow Vite frontend
+  origin: "'http://localhost:5173',https://me-api-playground-2-7wgi.onrender.com",   // allow Vite frontend
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
